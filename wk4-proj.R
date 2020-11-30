@@ -1,13 +1,14 @@
 run_Analysis<-function() {
- # read datasets   
-    x_test<-read.table("C:/Users/Samford/tmpdir/X_test.txt")
-    x_train<-read.table("C:/Users/Samford/tmpdir/X_train.txt")
-    activ<-read.table("C:/Users/Samford/tmpdir/activity_labels.txt")
-    sub_trn<-read.table("C:/Users/Samford/tmpdir/subject_train.txt")
-    sub_tst<-read.table("C:/Users/Samford/tmpdir/subject_test.txt")
-    y_train<-read.table("C:/Users/Samford/tmpdir/y_train.txt")
-    y_test<-read.table("C:/Users/Samford/tmpdir/y_test.txt")
-    feature<-read.table("C:/Users/Samford/tmpdir/features.txt")
+    library(dplyr)
+    # read datasets   
+    x_test<-read.table("X_test.txt")
+    x_train<-read.table("X_train.txt")
+    activ<-read.table("activity_labels.txt")
+    sub_trn<-read.table("subject_train.txt")
+    sub_tst<-read.table("subject_test.txt")
+    y_train<-read.table("y_train.txt")
+    y_test<-read.table("y_test.txt")
+    feature<-read.table("features.txt")
     
 # concatenate test and train data    
     x_tot<-rbind(x_test,x_train)
@@ -37,12 +38,12 @@ run_Analysis<-function() {
     colnames(table_final_1)<-cbind(data_names)
 #    View(table_final)
     
-    wanted_columns<-select(table_final_1, matches("subjectNumber|mean|std"),"Subject","Activity")
-    View(wanted_columns)
+    wanted_columns<-select(table_final_1, matches("Subject|activity|mean|std"))
+  #  View(wanted_columns)
     table_ans<-wanted_columns %>% group_by(Activity,Subject) %>% summarize(across(everything(),mean))
-                                                                   
-    table_ans<-wanted_columns %>% group_by(Activity,Subject) %>% summarize(mean1=mean(V1))
-    table_ans<-rename(table_ans,Activity=Activity,"Average by Activity and Subject"=mean1)
-    table_ans<-select(table_ans,Activity,Subject,'Average by Activity and Subject')
-    print(table_ans)
+    table_ans<-select(table_ans,-"subjectNumber")
+    View(table_ans)                                                               
+#    table_ans<-rename(table_ans,Activity=Activity,"Average by Activity and Subject"=mean1)
+ #   table_ans<-select(table_ans,Activity,Subject,'Average by Activity and Subject')
+    write.table(table_ans,"ans4.txt",row.names=FALSE)
 }
